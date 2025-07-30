@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tuning the Tide: Repository-based Code Reflection</title>
+    <title>LiveRepoReflection - Leaderboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -12,63 +14,102 @@
             color: #333;
             padding-top: 20px;
         }
-        .paper-icon {
-            max-width: 100px;
-            margin-bottom: 20px;
-        }
-        .abstract {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-        }
         .navbar {
             margin-bottom: 30px;
-        }
-        .feature-box {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: transform 0.3s;
-        }
-        .feature-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .authors {
-            font-style: italic;
-            margin-bottom: 20px;
         }
         .footer {
             margin-top: 50px;
             padding: 20px 0;
             background-color: #f8f9fa;
         }
-        .figure-container {
+        .table-responsive {
+            margin-bottom: 30px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        .model-closed {
+            background-color: rgba(216, 238, 242, 0.3);
+        }
+        .model-open {
+            background-color: rgba(253, 235, 221, 0.3);
+        }
+        .model-ours {
+            background-color: rgba(223, 240, 216, 0.3);
+        }
+        .legend-item {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+        }
+        .chart-container {
+            height: 400px;
             margin-bottom: 30px;
         }
-        .figure-container img {
-            max-width: 100%;
-            border: 1px solid #ddd;
+        .metrics-explanation {
+            background-color: #f8f9fa;
+            padding: 15px;
             border-radius: 5px;
+            margin-bottom: 30px;
+        }
+        .table th {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 1;
+        }
+        .language-selector {
+            margin-bottom: 20px;
+        }
+        .top-model {
+            font-weight: bold;
+            color: #198754;
+        }
+        .chart-toggle-btn {
+            margin-bottom: 15px;
+        }
+        .format-section {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .format-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #495057;
+            text-align: center;
+        }
+        .divider {
+            border-left: 2px dashed #dee2e6;
+            height: 100%;
+            margin: 0 15px;
+        }
+        .two-column-layout {
+            display: flex;
+            gap: 30px;
+        }
+        .column {
+            flex: 1;
         }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
-            <a class="navbar-brand" href="index.html">LiveRepoReflection</a>
+            <a class="navbar-brand" href="home.html">LiveRepoReflection</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="index.html">Home</a>
+                        <a class="nav-link" href="home.html">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="leaderboard.html">Leaderboard</a>
+                        <a class="nav-link active" href="index.html">Leaderboard</a>
                     </li>
                 </ul>
             </div>
@@ -76,155 +117,137 @@
     </nav>
 
     <div class="container">
-        <div class="row mb-5">
-            <div class="col-md-8 offset-md-2 text-center">
-                <div class="d-flex align-items-center justify-content-center gap-3 mb-4">
-                    <img src="assets/figure0.png" alt="Paper Icon" class="paper-icon" width="50" style="padding-top: 0px;">
-                    <h4 class="mb-4" style="padding-top: 0px; margin-bottom: 0px;">
-                        Turning the Tide: Repository-based Code Reflection
-                    </h4>                
-                </div>
-                <div class="authors">
-                    Wei Zhang, Jian Yang, Jiaxi Yang, Ya Wang, Zhoujun Li, Zeyu Cui, Binyuan Hui, Junyang Lin
-                </div>
-                <div class="d-flex justify-content-center gap-1 mb-0">
-                    <a href="https://LiveRepoReflection.github.io" class="btn btn-outline-secondary">🏠 Project Page</a>
-                    <a href="https://LiveRepoReflection.github.io/leaderboard.html" class="btn btn-outline-secondary">🏆 Leaderboard</a>
-                    <a href="https://github.com/LiveRepoReflection/LiveRepoReflection-Project" class="btn btn-outline-secondary">🐳 GitHub</a>
-                    <a href="https://github.com/LiveRepoReflection/LiveRepoReflection" class="btn btn-outline-secondary">📊 Benchmark Dataset</a>
-                    <a href="https://arxiv.org/abs/2507.09866" class="btn btn-outline-secondary">📄 Paper</a>
+        <h1 class="text-center mb-4">LiveRepoReflection Leaderboard</h1>
+        
+        <div class="d-flex justify-content-center gap-1 mb-3">
+            <a href="https://LiveRepoReflection.github.io/home.html" class="btn btn-outline-secondary">🏠 Project Page</a>
+            <a href="https://LiveRepoReflection.github.io/index.html" class="btn btn-outline-secondary">🏆 Leaderboard</a>
+            <a href="https://github.com/LiveRepoReflection/LiveRepoReflection-Project" class="btn btn-outline-secondary">🐳 GitHub</a>
+            <a href="https://github.com/LiveRepoReflection/LiveRepoReflection" class="btn btn-outline-secondary">📊 Benchmark Dataset</a>
+            <a href="https://arxiv.org/abs/2507.09866" class="btn btn-outline-secondary">📄 Paper</a>
+        </div>
+
+        <div class="metrics-explanation">
+            <h4>Metrics Explanation</h4>
+            <dl class="row">
+                <dt class="col-sm-2">Pass@1 (P1)</dt>
+                <dd class="col-sm-10">Percentage of tasks an LLM completes correctly on its first attempt, directly reflecting the one-shot coding accuracy.</dd>
+                
+                <dt class="col-sm-2">Pass@2 (P2)</dt>
+                <dd class="col-sm-10">After a failed attempt, LLMs can view their previous code and error messages before trying again, measuring the capacity to improve via immediate feedback.</dd>
+                
+                <dt class="col-sm-2">Well Format (WF)</dt>
+                <dd class="col-sm-10">Percentage of tasks where the LLM strictly follows the edit format specified in the system prompt.</dd>
+                
+                <dt class="col-sm-2">Fix Weight (FW)</dt>
+                <dd class="col-sm-10">Defined as (Pass@2-Pass@1)/Pass@2, represents the fraction of successful second-attempt fixes among all second-attempt successes.</dd>
+            </dl>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="legend text-center">
+                    <div class="legend-item model-closed">Closed-Source LLMs</div>
+                    <div class="legend-item model-open">Open-Source LLMs</div>
+                    <div class="legend-item model-ours">RepoReflectionCoder (Ours)</div>
                 </div>
             </div>
         </div>
-        
-        <div class="row">
-            <div class="col-lg-10 offset-lg-1">
-                <div class="abstract">
-                    <h3>Abstract</h3>
-                    <p>
-                        Code large language models (LLMs) enhance programming by understanding and generating code across languages, offering intelligent feedback, bug detection, and code updates through reflection, improving development efficiency and accessibility. While benchmarks (e.g. HumanEval/LiveCodeBench) evaluate code generation and real-world relevance, previous works ignore the scenario of modifying code in repositories. Considering challenges remaining in improving reflection capabilities and avoiding data contamination in dynamic benchmarks, we introduce LiveRepoReflection, a challenging benchmark for evaluating code understanding and generation in multi-file repository contexts, featuring 1,888 rigorously filtered test cases across 6 programming languages to ensure diversity, correctness, and high difficulty. Further, we create RepoReflection-Instruct, a large-scale, quality-filtered instruction-tuning dataset derived from diverse sources, used to train RepoReflectionCoder through a two-turn dialogue process involving code generation and error-driven repair. The leaderboard evaluates over 40 LLMs to reflect the model performance of repository-based code reflection.
-                    </p>
-                </div>
 
-                <h2>Overview</h2>
-                <p>
-                    Code large language models (LLMs) represent a significant advancement in comprehending and producing code across numerous programming languages. Fueled by extensive training on massive code repositories, LLMs empower developers by offering intelligent feedback, identifying potential bugs, and updating code snippets from human instructions. Code reflection refers to the ability of LLMs to examine and modify their previous responses. Using reflection, LLMs can streamline the development process, boost efficiency, and make programming more accessible to a wider number of developers.
-                </p>
-
-                <div class="figure-container text-center">
-                    <img src="assets/figure1.png" alt="Comparison between general code generation tasks and LiveRepoReflection tasks." width="50%">
-                    <p class="mt-2"><strong></strong> Comparison between general code generation tasks and LiveRepoReflection tasks.</p>
-                </div>
-
-                <div class="row mt-5 mb-4">
-                    <div class="col-md-6">
-                        <div class="feature-box">
-                            <h3>LiveRepoReflection Benchmark</h3>
-                            <p>
-                                A challenging benchmark for evaluating code understanding and generation in multi-file repository contexts, featuring 1,888 rigorously filtered test cases across 6 programming languages (Python, Java, C++, Rust, Go, JavaScript) to ensure diversity, correctness, and high difficulty.
-                            </p>
+        <div class="two-column-layout">
+            <!-- Left Column: Full-file code generation -->
+            <div class="column">
+                <div class="format-section">
+                    <div class="format-title">Full-file code generation</div>
+                    
+                    <div class="language-selector">
+                        <select class="form-select" id="languageSelector">
+                            <option value="all" selected>All Languages</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="rust">Rust</option>
+                            <option value="go">Go</option>
+                            <option value="javascript">JavaScript</option>
+                        </select>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="btn-group chart-toggle-btn" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm active" id="wholePerfBtn">Performance (P1/P2)</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="wholeFWBtn">Fix Weight (FW)</button>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="feature-box">
-                            <h3>RepoReflection-Instruct Dataset</h3>
-                            <p>
-                                A large-scale, quality-filtered instruction-tuning dataset derived from diverse sources including newly automatically generated examples. The dataset was created using sophisticated quality filtering mechanisms and decontamination techniques.
-                            </p>
-                        </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="wholeChart"></canvas>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-sm" id="wholeTable">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Size</th>
+                                    <th>P1</th>
+                                    <th>P2</th>
+                                    <th>WF</th>
+                                    <th>FW</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-
-                <div class="row mb-5">
-                    <div class="col-md-6">
-                        <div class="feature-box">
-                            <h3>RepoReflectionCoder Model</h3>
-                            <p>
-                                A specialized LLM trained on the RepoReflection-Instruct dataset through a two-turn dialogue process involving code generation and error-driven repair, with enhanced capabilities for repository-based code reflection.
-                            </p>
+            </div>
+            
+            <!-- Right Column: Patch-based incremental edits -->
+            <div class="column">
+                <div class="format-section">
+                    <div class="format-title">Patch-based incremental edits</div>
+                    
+                    <div class="language-selector">
+                        <select class="form-select" id="diffLanguageSelector">
+                            <option value="all" selected>All Languages</option>
+                            <option value="python">Python</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                            <option value="rust">Rust</option>
+                            <option value="go">Go</option>
+                            <option value="javascript">JavaScript</option>
+                        </select>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="btn-group chart-toggle-btn" role="group">
+                            <button type="button" class="btn btn-outline-primary btn-sm active" id="diffPerfBtn">Performance (P1/P2)</button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="diffFWBtn">Fix Weight (FW)</button>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="feature-box">
-                            <h3>Comprehensive Evaluation</h3>
-                            <p>
-                                Systematic evaluation of over 40 LLMs on the LiveRepoReflection benchmark, creating a dynamic leaderboard to track model performance and measuring alignment between model-generated responses and human preferences.
-                            </p>
-                        </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="diffChart"></canvas>
                     </div>
-                </div>
-
-                <h2>Key Contributions</h2>
-                <ul class="list-group mb-5">
-                    <li class="list-group-item">
-                        <strong>High-Quality Benchmark</strong>: We propose a high-quality, high-difficulty benchmark for evaluating code reflection of LLMs, featuring 1,888 rigorously filtered test cases across 6 programming languages. The benchmark emphasizes diversity, correctness, and challenge by retaining only cases that stump strong LLMs and undergo human annotation.
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Structured Dataset Creation</strong>: Starting with 500k examples, a strict rejection sampling process ensured high quality by filtering repositories based on criteria such as having unit-test files, reference answer files, aligned code signatures and answers, compatible environment configurations, and standardized file names.
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Systematic Evaluation</strong>: Our systematic evaluation of over 40+ LLMs on LiveRepoReflection led to the creation of a dynamic leaderboard to track model performance, with extensive experiments demonstrating that LiveRepoReflection effectively measures the alignment between model-generated responses and human preferences.
-                    </li>
-                </ul>
-
-                <div class="figure-container text-center">
-                    <img src="assets/figure3.png" alt="Figure 3: Comparison of dataset scales and structures between Aider Polyglot Benchmark and LiveRepoReflection." width="50%">
-                    <p class="mt-2"><strong></strong> Comparison of dataset scales and structures between Aider Polyglot Benchmark and LiveRepoReflection.</p>
-                </div>
-
-                <h2>Pipeline Overview</h2>
-                <p>
-                    The paper introduces an automatic creation pipeline to dynamically update the large-scale instruction corpus and evaluation benchmark to avoid data hacking:
-                </p>
-                <ol>
-                    <li>
-                        <strong>Repository structure design</strong>: Standardized repository code data file structure designed to be streamlined while ensuring normal evaluation.
-                    </li>
-                    <li>
-                        <strong>Seed code data collection</strong>: High-quality, diverse code samples collected from multiple public sources like GitHub, Hugging Face, and Reddit.
-                    </li>
-                    <li>
-                        <strong>Multiple-turn dialogue data generation</strong>: Using a mix of "creative" and "reasoning" LLMs to generate program topics, definitions, unit tests, and reference answers.
-                    </li>
-                    <li>
-                        <strong>Cross-execution verification</strong>: Rigorous testing and validation to ensure correctness and appropriate difficulty.
-                    </li>
-                    <li>
-                        <strong>Human annotation</strong>: Final validation and refinement by trained annotators to ensure quality.
-                    </li>
-                </ol>
-
-                <div class="figure-container text-center">
-                    <img src="assets/figure2.png" alt="Overview of Construction Pipeline." width="100%">
-                    <p class="mt-2"><strong></strong> Overview of Construction Pipeline.</p>
-                </div>
-
-                <h2>Evaluation Edit Format</h2>
-                <div class="figure-container text-center">
-                    <img src="assets/figure4.png" alt="Two evaluation edit format of LiveRepoReflection." width="40%">
-                    <p class="mt-2"><strong></strong> Two evaluation edit format of LiveRepoReflection.</p>
-                </div>
-
-                <h2>Comparison with Aider Polyglot</h2>
-                <div class="figure-container text-center">
-                    <img src="assets/figure5.png" alt="Performance comparison between LiveRepoReflection and the Aider Polyglot Benchmark." width="100%">
-                    <p class="mt-2"><strong></strong> Performance comparison between LiveRepoReflection and the Aider Polyglot Benchmark.</p>
-                </div>
-
-                <h2>Pass@k Analysis</h2>
-                <div class="figure-container text-center">
-                    <img src="assets/figure6.png" alt="Pass@k (k=1–10) curves for nine LLMs." width="100%">
-                    <p class="mt-2"><strong></strong> Pass@k (k=1–10) curves for nine LLMs.</p>
-                </div>
-
-                <h2>File Structure</h2>
-                <div class="figure-container text-center">
-                    <img src="assets/figure7.png" alt="Polyglot repository code file structure examples." width="100%">
-                    <p class="mt-2"><strong></strong> Polyglot repository code file structure examples.</p>
-                </div>
-
-                <div class="text-center mt-5 mb-5">
-                    <a href="leaderboard.html" class="btn btn-lg btn-primary">View Leaderboard Results</a>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover table-sm" id="diffTable">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Size</th>
+                                    <th>P1</th>
+                                    <th>P2</th>
+                                    <th>WF</th>
+                                    <th>FW</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                               <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -240,5 +263,1181 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Complete data from both leaderboard tables (all 40 models)
+        const leaderboards = {
+            whole: {
+                // Closed-Source LLMs
+                "o4-mini-2025-04-16": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 14.0, p2: 40.5, wf: 99.2, fw: 65.4},
+                    python: {type: "model-closed", p1: 20.4, p2: 54.9, wf: 99.8, fw: 62.9},
+                    java: {type: "model-closed", p1: 4.4, p2: 33.2, wf: 100.0, fw: 86.7},
+                    cpp: {type: "model-closed", p1: 10.5, p2: 41.3, wf: 93.0, fw: 74.6},
+                    rust: {type: "model-closed", p1: 6.6, p2: 10.8, wf: 100.0, fw: 39.1},
+                    go: {type: "model-closed", p1: 7.7, p2: 29.8, wf: 99.3, fw: 74.2},
+                    javascript: {type: "model-closed", p1: 45.0, p2: 50.0, wf: 98.3, fw: 10.0}
+                },
+                "o3-mini-2025-01-31": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 11.9, p2: 36.1, wf: 99.8, fw: 67.2},
+                    python: {type: "model-closed", p1: 18.8, p2: 50.9, wf: 100.0, fw: 63.1},
+                    java: {type: "model-closed", p1: 4.8, p2: 31.6, wf: 98.8, fw: 84.8},
+                    cpp: {type: "model-closed", p1: 10.5, p2: 32.9, wf: 100.0, fw: 68.1},
+                    rust: {type: "model-closed", p1: 4.7, p2: 8.5, wf: 100.0, fw: 44.4},
+                    go: {type: "model-closed", p1: 4.2, p2: 18.9, wf: 100.0, fw: 77.6},
+                    javascript: {type: "model-closed", p1: 26.7, p2: 75.0, wf: 100.0, fw: 64.4}
+                },
+                "Claude-3-7-Sonnet-20250219": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 11.8, p2: 37.1, wf: 99.8, fw: 68.3},
+                    python: {type: "model-closed", p1: 17.6, p2: 51.1, wf: 99.9, fw: 65.6},
+                    java: {type: "model-closed", p1: 14.0, p2: 33.2, wf: 100.0, fw: 57.8},
+                    cpp: {type: "model-closed", p1: 6.3, p2: 23.1, wf: 98.6, fw: 72.7},
+                    rust: {type: "model-closed", p1: 3.3, p2: 6.6, wf: 100.0, fw: 50.0},
+                    go: {type: "model-closed", p1: 6.5, p2: 25.8, wf: 100.0, fw: 75.0},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 80.0, wf: 98.3, fw: 97.9}
+                },
+                "Claude-3-5-Sonnet-20241022": {
+                    size: "🔒", 
+                    all: {type: "model-closed", p1: 9.6, p2: 32.6, wf: 97.4, fw: 70.6},
+                    python: {type: "model-closed", p1: 14.4, p2: 45.7, wf: 98.2, fw: 68.5},
+                    java: {type: "model-closed", p1: 10.8, p2: 30.4, wf: 99.2, fw: 64.5},
+                    cpp: {type: "model-closed", p1: 4.2, p2: 14.7, wf: 99.3, fw: 71.4},
+                    rust: {type: "model-closed", p1: 2.8, p2: 7.5, wf: 99.5, fw: 62.5},
+                    go: {type: "model-closed", p1: 5.7, p2: 23.6, wf: 95.5, fw: 75.8},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 53.3, wf: 78.3, fw: 96.8}
+                },
+                "DeepSeek-V3-250324": {
+                    size: "37/671B", 
+                    all: {type: "model-open", p1: 9.1, p2: 27.8, wf: 99.8, fw: 67.4},
+                    python: {type: "model-open", p1: 12.7, p2: 39.9, wf: 99.8, fw: 68.2},
+                    java: {type: "model-open", p1: 16.0, p2: 30.8, wf: 100.0, fw: 48.1},
+                    cpp: {type: "model-open", p1: 4.9, p2: 12.6, wf: 100.0, fw: 61.1},
+                    rust: {type: "model-open", p1: 2.4, p2: 7.5, wf: 100.0, fw: 68.8},
+                    go: {type: "model-open", p1: 3.7, p2: 19.1, wf: 99.5, fw: 80.5},
+                    javascript: {type: "model-open", p1: 0.0, p2: 15.0, wf: 100.0, fw: 100.0}
+                },
+                "RepoReflectionCoder": {
+                    size: "32B",
+                    all: {type: "model-ours", p1: 9.0, p2: 28.2, wf: 99.8, fw: 68.0},
+                    python: {type: "model-ours", p1: 13.5, p2: 40.4, wf: 99.8, fw: 66.5},
+                    java: {type: "model-ours", p1: 8.4, p2: 22.0, wf: 99.6, fw: 61.8},
+                    cpp: {type: "model-ours", p1: 5.6, p2: 15.4, wf: 100.0, fw: 63.6},
+                    rust: {type: "model-ours", p1: 1.4, p2: 3.3, wf: 100.0, fw: 57.1},
+                    go: {type: "model-ours", p1: 4.5, p2: 17.4, wf: 100.0, fw: 74.3},
+                    javascript: {type: "model-ours", p1: 15.0, p2: 78.3, wf: 100.0, fw: 80.8}
+                },
+                "DeepSeek-R1": {
+                    size: "37/671B", 
+                    all: {type: "model-open", p1: 6.9, p2: 27.8, wf: 99.6, fw: 75.0},
+                    python: {type: "model-open", p1: 9.6, p2: 37.6, wf: 99.9, fw: 74.4},
+                    java: {type: "model-open", p1: 6.4, p2: 26.0, wf: 99.6, fw: 75.4},
+                    cpp: {type: "model-open", p1: 7.0, p2: 22.4, wf: 98.6, fw: 68.8},
+                    rust: {type: "model-open", p1: 3.8, p2: 9.4, wf: 100.0, fw: 60.0},
+                    go: {type: "model-open", p1: 4.5, p2: 17.6, wf: 99.3, fw: 74.6},
+                    javascript: {type: "model-open", p1: 0.0, p2: 46.7, wf: 100.0, fw: 100.0}
+                },
+                "DeepSeek-V3": {
+                    size: "37/671B",
+                    all: {type: "model-open", p1: 7.7, p2: 27.8, wf: 99.2, fw: 72.2},
+                    python: {type: "model-open", p1: 11.1, p2: 40.1, wf: 99.3, fw: 72.3},
+                    java: {type: "model-open", p1: 11.2, p2: 29.6, wf: 99.6, fw: 62.2},
+                    cpp: {type: "model-open", p1: 6.3, p2: 15.4, wf: 100.0, fw: 59.1},
+                    rust: {type: "model-open", p1: 3.3, p2: 7.1, wf: 100.0, fw: 53.3},
+                    go: {type: "model-open", p1: 2.7, p2: 18.4, wf: 98.5, fw: 85.1},
+                    javascript: {type: "model-open", p1: 0.0, p2: 18.3, wf: 96.7, fw: 100.0}
+                },
+                "GPT-4.1-2025-04-14": {
+                    size: "🔒", 
+                    all: {type: "model-closed", p1: 7.2, p2: 30.9, wf: 99.9, fw: 76.7},
+                    python: {type: "model-closed", p1: 10.6, p2: 45.7, wf: 100.0, fw: 76.8},
+                    java: {type: "model-closed", p1: 3.6, p2: 27.6, wf: 100.0, fw: 87.0},
+                    cpp: {type: "model-closed", p1: 4.9, p2: 26.6, wf: 100.0, fw: 81.6},
+                    rust: {type: "model-closed", p1: 3.3, p2: 9.4, wf: 100.0, fw: 65.0},
+                    go: {type: "model-closed", p1: 2.2, p2: 14.9, wf: 99.8, fw: 85.0},
+                    javascript: {type: "model-closed", p1: 28.3, p2: 36.7, wf: 100.0, fw: 22.9}
+                },
+                "Grok-3": {
+                    size: "🔒", 
+                    all: {type: "model-closed", p1: 7.7, p2: 28.9, wf: 99.9, fw: 73.4},
+                    python: {type: "model-closed", p1: 12.2, p2: 40.6, wf: 100.0, fw: 70.0},
+                    java: {type: "model-closed", p1: 4.8, p2: 22.8, wf: 100.0, fw: 78.9},
+                    cpp: {type: "model-closed", p1: 5.6, p2: 15.4, wf: 99.3, fw: 63.6},
+                    rust: {type: "model-closed", p1: 3.3, p2: 8.0, wf: 100.0, fw: 58.8},
+                    go: {type: "model-closed", p1: 4.5, p2: 20.1, wf: 100.0, fw: 77.8},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 60.0, wf: 100.0, fw: 100.0}
+                },
+                "Claude-3-7-Sonnet-20250219-Thinking": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 9.9, p2: 28.8, wf: 99.7, fw: 65.6},
+                    python: {type: "model-closed", p1: 14.1, p2: 40.7, wf: 99.9, fw: 65.3},
+                    java: {type: "model-closed", p1: 12.8, p2: 25.6, wf: 99.2, fw: 50.0},
+                    cpp: {type: "model-closed", p1: 4.9, p2: 20.3, wf: 99.3, fw: 75.9},
+                    rust: {type: "model-closed", p1: 3.3, p2: 8.0, wf: 100.0, fw: 58.8},
+                    go: {type: "model-closed", p1: 6.0, p2: 18.4, wf: 99.8, fw: 67.6},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 43.3, wf: 100.0, fw: 96.0}
+                },
+                "Claude-3-5-Haiku-20241022": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 7.8, p2: 24.4, wf: 97.5, fw: 68.1},
+                    python: {type: "model-closed", p1: 11.5, p2: 33.7, wf: 97.8, fw: 65.9},
+                    java: {type: "model-closed", p1: 12.8, p2: 22.4, wf: 96.4, fw: 42.9},
+                    cpp: {type: "model-closed", p1: 4.2, p2: 13.3, wf: 89.5, fw: 68.4},
+                    rust: {type: "model-closed", p1: 1.4, p2: 5.7, wf: 100.0, fw: 75.0},
+                    go: {type: "model-closed", p1: 2.7, p2: 16.9, wf: 99.5, fw: 83.8},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 50.0, wf: 95.0, fw: 96.6}
+                },
+                "GPT-4o-2024-11-20": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 7.6, p2: 22.5, wf: 99.8, fw: 66.0},
+                    python: {type: "model-closed", p1: 9.1, p2: 30.4, wf: 99.6, fw: 69.9},
+                    java: {type: "model-closed", p1: 8.8, p2: 21.6, wf: 99.6, fw: 59.3},
+                    cpp: {type: "model-closed", p1: 3.5, p2: 14.7, wf: 100.0, fw: 76.2},
+                    rust: {type: "model-closed", p1: 2.8, p2: 6.6, wf: 100.0, fw: 57.1},
+                    go: {type: "model-closed", p1: 2.0, p2: 11.2, wf: 100.0, fw: 82.2},
+                    javascript: {type: "model-closed", p1: 46.7, p2: 68.3, wf: 100.0, fw: 31.6}
+                },
+                "Grok-3-fast": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 9.0, p2: 29.9, wf: 99.8, fw: 69.9},
+                    python: {type: "model-closed", p1: 14.3, p2: 42.4, wf: 99.9, fw: 66.4},
+                    java: {type: "model-closed", p1: 4.8, p2: 25.2, wf: 100.0, fw: 81.0},
+                    cpp: {type: "model-closed", p1: 5.6, p2: 16.1, wf: 99.3, fw: 65.2},
+                    rust: {type: "model-closed", p1: 4.7, p2: 9.4, wf: 100.0, fw: 50.0},
+                    go: {type: "model-closed", p1: 5.7, p2: 20.1, wf: 99.8, fw: 71.6},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 50.0, wf: 100.0, fw: 100.0}
+                },
+                "Grok-3-mini": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 6.2, p2: 25.5, wf: 98.3, fw: 75.7},
+                    python: {type: "model-closed", p1: 9.9, p2: 38.0, wf: 96.7, fw: 74.0},
+                    java: {type: "model-closed", p1: 3.6, p2: 22.4, wf: 99.6, fw: 83.9},
+                    cpp: {type: "model-closed", p1: 9.1, p2: 21.7, wf: 98.6, fw: 58.1},
+                    rust: {type: "model-closed", p1: 3.3, p2: 8.0, wf: 100.0, fw: 58.8},
+                    go: {type: "model-closed", p1: 1.5, p2: 11.9, wf: 99.5, fw: 87.5},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 28.3, wf: 100.0, fw: 94.0}
+                },
+                "o1-mini-2024-09-12": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 9.0, p2: 28.9, wf: 95.8, fw: 68.8},
+                    python: {type: "model-closed", p1: 12.2, p2: 41.2, wf: 98.4, fw: 70.4},
+                    java: {type: "model-closed", p1: 2.8, p2: 18.0, wf: 92.0, fw: 84.4},
+                    cpp: {type: "model-closed", p1: 5.6, p2: 23.1, wf: 82.5, fw: 75.8},
+                    rust: {type: "model-closed", p1: 2.4, p2: 4.7, wf: 97.6, fw: 50.0},
+                    go: {type: "model-closed", p1: 4.2, p2: 16.9, wf: 96.5, fw: 75.0},
+                    javascript: {type: "model-closed", p1: 55.0, p2: 85.0, wf: 95.0, fw: 35.3}
+                },
+                "GPT-4.1-mini-2025-04-14": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 8.9, p2: 28.4, wf: 99.9, fw: 68.7},
+                    python: {type: "model-closed", p1: 10.9, p2: 38.8, wf: 99.9, fw: 72.0},
+                    java: {type: "model-closed", p1: 4.0, p2: 17.6, wf: 100.0, fw: 77.3},
+                    cpp: {type: "model-closed", p1: 7.7, p2: 21.7, wf: 100.0, fw: 64.5},
+                    rust: {type: "model-closed", p1: 4.2, p2: 7.1, wf: 100.0, fw: 40.0},
+                    go: {type: "model-closed", p1: 4.7, p2: 19.1, wf: 99.8, fw: 75.3},
+                    javascript: {type: "model-closed", p1: 50.0, p2: 85.0, wf: 100.0, fw: 41.2}
+                },
+                "GPT-4.1-nano-2025-04-14": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 2.1, p2: 9.9, wf: 71.4, fw: 79.0},
+                    python: {type: "model-closed", p1: 3.2, p2: 12.8, wf: 75.7, fw: 75.2},
+                    java: {type: "model-closed", p1: 0.8, p2: 5.2, wf: 47.2, fw: 84.6},
+                    cpp: {type: "model-closed", p1: 2.1, p2: 11.2, wf: 53.8, fw: 81.2},
+                    rust: {type: "model-closed", p1: 0.5, p2: 0.9, wf: 92.9, fw: 50.0},
+                    go: {type: "model-closed", p1: 0.2, p2: 4.0, wf: 73.4, fw: 93.8},
+                    javascript: {type: "model-closed", p1: 10.0, p2: 56.7, wf: 65.0, fw: 82.4}
+                },
+                "GPT-4.5-preview-2025-02-27": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 7.6, p2: 27.1, wf: 100.0, fw: 72.1},
+                    python: {type: "model-closed", p1: 11.1, p2: 40.1, wf: 100.0, fw: 72.3},
+                    java: {type: "model-closed", p1: 3.2, p2: 23.6, wf: 100.0, fw: 86.4},
+                    cpp: {type: "model-closed", p1: 7.0, p2: 19.6, wf: 100.0, fw: 64.3},
+                    rust: {type: "model-closed", p1: 3.8, p2: 8.5, wf: 100.0, fw: 55.6},
+                    go: {type: "model-closed", p1: 3.2, p2: 14.4, wf: 100.0, fw: 77.6},
+                    javascript: {type: "model-closed", p1: 21.7, p2: 33.3, wf: 100.0, fw: 34.8}
+                },
+                "Grok-3-mini-fast": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 5.3, p2: 25.6, wf: 98.4, fw: 79.1},
+                    python: {type: "model-closed", p1: 8.9, p2: 37.2, wf: 96.3, fw: 76.1},
+                    java: {type: "model-closed", p1: 1.2, p2: 24.0, wf: 100.0, fw: 95.0},
+                    cpp: {type: "model-closed", p1: 5.6, p2: 19.6, wf: 100.0, fw: 71.4},
+                    rust: {type: "model-closed", p1: 1.9, p2: 7.5, wf: 100.0, fw: 75.0},
+                    go: {type: "model-closed", p1: 3.2, p2: 14.9, wf: 100.0, fw: 78.3},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 23.3, wf: 100.0, fw: 100.0}
+                },
+                "Doubao-1-5-Thinking-pro-m-250415": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 5.9, p2: 22.0, wf: 99.2, fw: 73.1},
+                    python: {type: "model-closed", p1: 10.1, p2: 33.5, wf: 99.0, fw: 69.8},
+                    java: {type: "model-closed", p1: 2.4, p2: 16.4, wf: 99.6, fw: 85.4},
+                    cpp: {type: "model-closed", p1: 4.2, p2: 14.7, wf: 97.2, fw: 71.4},
+                    rust: {type: "model-closed", p1: 0.5, p2: 3.3, wf: 100.0, fw: 85.7},
+                    go: {type: "model-closed", p1: 1.5, p2: 6.7, wf: 99.5, fw: 77.8},
+                    javascript: {type: "model-closed", p1: 16.7, p2: 75.0, wf: 100.0, fw: 77.7}
+                },
+                "Gemini-2.0-Flash": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 3.7, p2: 16.0, wf: 98.6, fw: 76.8},
+                    python: {type: "model-closed", p1: 5.6, p2: 26.6, wf: 99.0, fw: 78.9},
+                    java: {type: "model-closed", p1: 5.6, p2: 16.0, wf: 96.8, fw: 65.0},
+                    cpp: {type: "model-closed", p1: 2.8, p2: 8.4, wf: 97.2, fw: 66.7},
+                    rust: {type: "model-closed", p1: 1.9, p2: 3.3, wf: 100.0, fw: 42.9},
+                    go: {type: "model-closed", p1: 0.5, p2: 2.7, wf: 98.8, fw: 81.8},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 23.3, wf: 96.7, fw: 100.0}
+                },
+                "Gemini-2.5-Flash-preview-04-17": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 2.0, p2: 13.6, wf: 71.7, fw: 85.2},
+                    python: {type: "model-closed", p1: 1.7, p2: 19.1, wf: 59.5, fw: 91.1},
+                    java: {type: "model-closed", p1: 1.6, p2: 10.8, wf: 82.8, fw: 85.2},
+                    cpp: {type: "model-closed", p1: 2.8, p2: 16.1, wf: 57.3, fw: 82.6},
+                    rust: {type: "model-closed", p1: 2.4, p2: 5.2, wf: 97.6, fw: 54.5},
+                    go: {type: "model-closed", p1: 2.7, p2: 8.2, wf: 80.1, fw: 66.7},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 10.0, wf: 76.7, fw: 100.0}
+                },
+                "Gemini-2.5-pro-preview-05-06": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 0.7, p2: 8.3, wf: 99.9, fw: 91.7},
+                    python: {type: "model-closed", p1: 0.5, p2: 13.5, wf: 100.0, fw: 96.4},
+                    java: {type: "model-closed", p1: 0.8, p2: 6.0, wf: 100.0, fw: 86.7},
+                    cpp: {type: "model-closed", p1: 0.7, p2: 4.9, wf: 100.0, fw: 85.7},
+                    rust: {type: "model-closed", p1: 0.0, p2: 3.8, wf: 100.0, fw: 100.0},
+                    go: {type: "model-closed", p1: 1.5, p2: 3.2, wf: 99.5, fw: 53.8},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 5.0, wf: 100.0, fw: 100.0}
+                },
+                "GPT-4o-mini-2024-07-18": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 5.5, p2: 16.1, wf: 96.7, fw: 66.1},
+                    python: {type: "model-closed", p1: 7.6, p2: 22.9, wf: 98.3, fw: 67.0},
+                    java: {type: "model-closed", p1: 2.8, p2: 14.0, wf: 95.6, fw: 80.0},
+                    cpp: {type: "model-closed", p1: 2.8, p2: 7.7, wf: 85.3, fw: 63.6},
+                    rust: {type: "model-closed", p1: 1.9, p2: 2.8, wf: 98.6, fw: 33.3},
+                    go: {type: "model-closed", p1: 0.2, p2: 4.7, wf: 96.8, fw: 94.7},
+                    javascript: {type: "model-closed", p1: 41.7, p2: 75.0, wf: 100.0, fw: 44.4}
+                },
+                "Claude-3-5-Sonnet-20240620": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 8.1, p2: 24.5, wf: 97.3, fw: 67.0},
+                    python: {type: "model-closed", p1: 12.1, p2: 34.6, wf: 98.3, fw: 65.1},
+                    java: {type: "model-closed", p1: 12.0, p2: 23.6, wf: 97.6, fw: 49.2},
+                    cpp: {type: "model-closed", p1: 3.5, p2: 8.4, wf: 84.6, fw: 58.3},
+                    rust: {type: "model-closed", p1: 1.4, p2: 6.6, wf: 99.5, fw: 78.6},
+                    go: {type: "model-closed", p1: 3.7, p2: 16.6, wf: 98.3, fw: 77.6},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 45.0, wf: 98.3, fw: 96.2}
+                },
+                // Open-Source LLMs
+                "QwQ-32B": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 1.7, p2: 13.3, wf: 93.3, fw: 86.9},
+                    python: {type: "model-open", p1: 2.1, p2: 21.8, wf: 92.6, fw: 90.5},
+                    java: {type: "model-open", p1: 1.6, p2: 8.4, wf: 94.4, fw: 81.0},
+                    cpp: {type: "model-open", p1: 3.5, p2: 13.3, wf: 91.6, fw: 73.7},
+                    rust: {type: "model-open", p1: 1.4, p2: 3.3, wf: 98.1, fw: 57.1},
+                    go: {type: "model-open", p1: 1.0, p2: 5.2, wf: 94.8, fw: 81.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 8.3, wf: 76.7, fw: 100.0}
+                },
+                "Qwen3-32B-Instruct Think": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 4.9, p2: 21.6, wf: 80.3, fw: 77.5},
+                    python: {type: "model-open", p1: 5.7, p2: 32.0, wf: 86.1, fw: 82.1},
+                    java: {type: "model-open", p1: 6.8, p2: 17.6, wf: 70.4, fw: 61.4},
+                    cpp: {type: "model-open", p1: 3.5, p2: 18.2, wf: 51.7, fw: 80.8},
+                    rust: {type: "model-open", p1: 1.4, p2: 4.7, wf: 97.2, fw: 70.0},
+                    go: {type: "model-open", p1: 2.7, p2: 10.7, wf: 78.7, fw: 74.4},
+                    javascript: {type: "model-open", p1: 15.0, p2: 38.3, wf: 63.3, fw: 69.4}
+                },
+                "Qwen3-32B-Instruct Chat": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 6.0, p2: 19.9, wf: 93.1, fw: 69.7},
+                    python: {type: "model-open", p1: 7.7, p2: 27.9, wf: 95.1, fw: 72.5},
+                    java: {type: "model-open", p1: 6.4, p2: 19.6, wf: 89.2, fw: 67.3},
+                    cpp: {type: "model-open", p1: 5.6, p2: 14.7, wf: 83.2, fw: 61.9},
+                    rust: {type: "model-open", p1: 1.4, p2: 2.4, wf: 98.6, fw: 40.0},
+                    go: {type: "model-open", p1: 1.7, p2: 8.9, wf: 93.3, fw: 80.6},
+                    javascript: {type: "model-open", p1: 28.3, p2: 60.0, wf: 85.0, fw: 52.8}
+                },
+                "Qwen2.5-Coder-32B-Instruct": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 3.9, p2: 14.9, wf: 97.6, fw: 74.0},
+                    python: {type: "model-open", p1: 6.6, p2: 22.7, wf: 98.4, fw: 71.0},
+                    java: {type: "model-open", p1: 3.2, p2: 10.8, wf: 93.6, fw: 70.4},
+                    cpp: {type: "model-open", p1: 2.1, p2: 6.3, wf: 98.6, fw: 66.7},
+                    rust: {type: "model-open", p1: 0.9, p2: 4.7, wf: 98.6, fw: 80.0},
+                    go: {type: "model-open", p1: 1.2, p2: 6.5, wf: 98.5, fw: 80.8},
+                    javascript: {type: "model-open", p1: 1.7, p2: 38.3, wf: 91.7, fw: 95.6}
+                },
+                "Qwen3-30B-A3B-Instruct Think": {
+                    size: "3/30B",
+                    all: {type: "model-open", p1: 4.4, p2: 20.0, wf: 85.6, fw: 77.7},
+                    python: {type: "model-open", p1: 6.3, p2: 29.3, wf: 91.5, fw: 78.3},
+                    java: {type: "model-open", p1: 1.6, p2: 15.2, wf: 76.8, fw: 89.5},
+                    cpp: {type: "model-open", p1: 2.8, p2: 11.9, wf: 62.2, fw: 76.5},
+                    rust: {type: "model-open", p1: 2.4, p2: 4.2, wf: 95.3, fw: 44.4},
+                    go: {type: "model-open", p1: 2.7, p2: 12.9, wf: 84.1, fw: 78.8},
+                    javascript: {type: "model-open", p1: 13.3, p2: 35.0, wf: 73.3, fw: 62.0}
+                },
+                "Qwen3-30B-A3B-Instruct Chat": {
+                    size: "3/30B",
+                    all: {type: "model-open", p1: 4.4, p2: 15.3, wf: 99.4, fw: 70.8},
+                    python: {type: "model-open", p1: 7.7, p2: 23.0, wf: 98.8, fw: 66.7},
+                    java: {type: "model-open", p1: 0.8, p2: 13.6, wf: 100.0, fw: 94.1},
+                    cpp: {type: "model-open", p1: 3.5, p2: 7.7, wf: 99.3, fw: 54.5},
+                    rust: {type: "model-open", p1: 0.9, p2: 0.9, wf: 99.5, fw: 0.0},
+                    go: {type: "model-open", p1: 1.7, p2: 6.9, wf: 100.0, fw: 75.0},
+                    javascript: {type: "model-open", p1: 8.3, p2: 40.0, wf: 100.0, fw: 79.3}
+                },
+                "Qwen3-14B-Instruct Chat": {
+                    size: "14B",
+                    all: {type: "model-open", p1: 3.3, p2: 14.1, wf: 99.2, fw: 76.7},
+                    python: {type: "model-open", p1: 4.8, p2: 20.0, wf: 99.4, fw: 76.2},
+                    java: {type: "model-open", p1: 4.4, p2: 15.6, wf: 99.2, fw: 71.8},
+                    cpp: {type: "model-open", p1: 3.5, p2: 6.3, wf: 98.6, fw: 44.4},
+                    rust: {type: "model-open", p1: 0.5, p2: 2.8, wf: 99.5, fw: 83.3},
+                    go: {type: "model-open", p1: 1.2, p2: 8.4, wf: 99.0, fw: 85.3},
+                    javascript: {type: "model-open", p1: 1.7, p2: 23.3, wf: 96.7, fw: 92.7}
+                },
+                "Qwen3-14B-Instruct Think": {
+                    size: "14B",
+                    all: {type: "model-open", p1: 3.4, p2: 16.9, wf: 83.8, fw: 80.0},
+                    python: {type: "model-open", p1: 4.8, p2: 26.0, wf: 87.7, fw: 81.7},
+                    java: {type: "model-open", p1: 2.0, p2: 16.4, wf: 71.6, fw: 87.8},
+                    cpp: {type: "model-open", p1: 1.4, p2: 10.5, wf: 69.2, fw: 86.7},
+                    rust: {type: "model-open", p1: 1.4, p2: 3.3, wf: 92.9, fw: 57.1},
+                    go: {type: "model-open", p1: 3.5, p2: 9.2, wf: 85.6, fw: 62.2},
+                    javascript: {type: "model-open", p1: 1.7, p2: 11.7, wf: 71.7, fw: 85.5}
+                },
+                "Qwen3-8B-Instruct Chat": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 4.0, p2: 11.9, wf: 99.7, fw: 66.7},
+                    python: {type: "model-open", p1: 4.3, p2: 15.6, wf: 99.9, fw: 72.7},
+                    java: {type: "model-open", p1: 9.6, p2: 19.2, wf: 99.6, fw: 50.0},
+                    cpp: {type: "model-open", p1: 1.4, p2: 4.2, wf: 100.0, fw: 66.7},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.5, wf: 100.0, fw: 100.0},
+                    go: {type: "model-open", p1: 0.5, p2: 4.0, wf: 99.3, fw: 87.5},
+                    javascript: {type: "model-open", p1: 20.0, p2: 43.3, wf: 98.3, fw: 53.8}
+                },
+                "Qwen3-8B-Instruct Think": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 3.0, p2: 14.4, wf: 87.9, fw: 79.0},
+                    python: {type: "model-open", p1: 4.4, p2: 22.9, wf: 92.3, fw: 80.9},
+                    java: {type: "model-open", p1: 3.6, p2: 8.8, wf: 80.0, fw: 59.1},
+                    cpp: {type: "model-open", p1: 1.4, p2: 10.5, wf: 73.4, fw: 86.7},
+                    rust: {type: "model-open", p1: 0.0, p2: 1.9, wf: 98.1, fw: 100.0},
+                    go: {type: "model-open", p1: 1.7, p2: 7.9, wf: 84.4, fw: 78.1},
+                    javascript: {type: "model-open", p1: 5.0, p2: 16.7, wf: 81.7, fw: 77.0}
+                },
+                "Seed-Coder-8B-Instruct": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 2.9, p2: 9.1, wf: 81.8, fw: 68.6},
+                    python: {type: "model-open", p1: 4.4, p2: 13.3, wf: 91.6, fw: 67.0},
+                    java: {type: "model-open", p1: 2.0, p2: 11.6, wf: 47.2, fw: 82.8},
+                    cpp: {type: "model-open", p1: 2.1, p2: 3.5, wf: 55.9, fw: 40.0},
+                    rust: {type: "model-open", p1: 2.4, p2: 3.8, wf: 98.1, fw: 37.5},
+                    go: {type: "model-open", p1: 1.0, p2: 3.2, wf: 82.1, fw: 69.2},
+                    javascript: {type: "model-open", p1: 1.7, p2: 13.3, wf: 93.3, fw: 87.2}
+                },
+                "Qwen3-4B-Instruct Chat": {
+                    size: "4B",
+                    all: {type: "model-open", p1: 2.4, p2: 6.7, wf: 99.3, fw: 64.3},
+                    python: {type: "model-open", p1: 4.0, p2: 10.9, wf: 98.4, fw: 62.9},
+                    java: {type: "model-open", p1: 1.2, p2: 2.4, wf: 100.0, fw: 50.0},
+                    cpp: {type: "model-open", p1: 2.1, p2: 4.9, wf: 100.0, fw: 57.1},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.5, wf: 100.0, fw: 100.0},
+                    go: {type: "model-open", p1: 0.7, p2: 2.5, wf: 100.0, fw: 70.0},
+                    javascript: {type: "model-open", p1: 5.0, p2: 21.7, wf: 100.0, fw: 90.8}
+                },
+                "Qwen3-4B-Instruct Think": {
+                    size: "4B",
+                    all: {type: "model-open", p1: 2.2, p2: 10.6, wf: 86.4, fw: 79.5},
+                    python: {type: "model-open", p1: 3.7, p2: 17.8, wf: 92.2, fw: 79.5},
+                    java: {type: "model-open", p1: 0.8, p2: 4.0, wf: 72.4, fw: 80.0},
+                    cpp: {type: "model-open", p1: 2.1, p2: 7.0, wf: 67.8, fw: 70.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.5, wf: 95.3, fw: 100.0},
+                    go: {type: "model-open", p1: 1.5, p2: 5.0, wf: 86.6, fw: 70.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 21.7, wf: 78.3, fw: 100.0}
+                },
+                "DeepSeek-R1-Distill-Qwen-14B": {
+                    size: "14B",
+                    all: {type: "model-open", p1: 1.9, p2: 6.5, wf: 88.6, fw: 70.5},
+                    python: {type: "model-open", p1: 3.9, p2: 13.0, wf: 94.0, fw: 70.1},
+                    java: {type: "model-open", p1: 0.4, p2: 1.6, wf: 81.6, fw: 75.0},
+                    cpp: {type: "model-open", p1: 0.7, p2: 2.8, wf: 94.4, fw: 75.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 97.2, fw: 0.0},
+                    go: {type: "model-open", p1: 0.5, p2: 1.0, wf: 81.4, fw: 50.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 5.0, wf: 48.3, fw: 100.0}
+                },
+                "Qwen3-1.7B-Instruct Chat": {
+                    size: "1.7B",
+                    all: {type: "model-open", p1: 1.0, p2: 1.9, wf: 96.0, fw: 47.2},
+                    python: {type: "model-open", p1: 1.2, p2: 2.1, wf: 94.6, fw: 41.2},
+                    java: {type: "model-open", p1: 1.6, p2: 1.6, wf: 92.0, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 98.6, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.5, wf: 99.0, fw: 100.0},
+                    javascript: {type: "model-open", p1: 8.3, p2: 21.7, wf: 91.7, fw: 61.8}
+                },
+                "Qwen3-1.7B-Instruct Think": {
+                    size: "1.7B",
+                    all: {type: "model-open", p1: 1.5, p2: 3.4, wf: 69.3, fw: 56.9},
+                    python: {type: "model-open", p1: 2.8, p2: 6.8, wf: 79.6, fw: 58.9},
+                    java: {type: "model-open", p1: 1.2, p2: 1.2, wf: 50.4, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 61.5, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 78.8, fw: 0.0},
+                    go: {type: "model-open", p1: 0.5, p2: 0.5, wf: 62.3, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 6.7, wf: 38.3, fw: 100.0}
+                },
+                "Llama3.1-8B-Instruct": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 1.1, p2: 3.5, wf: 82.7, fw: 68.7},
+                    python: {type: "model-open", p1: 1.3, p2: 4.4, wf: 87.2, fw: 69.4},
+                    java: {type: "model-open", p1: 1.2, p2: 7.6, wf: 72.0, fw: 84.2},
+                    cpp: {type: "model-open", p1: 0.7, p2: 0.7, wf: 63.6, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 92.9, fw: 0.0},
+                    go: {type: "model-open", p1: 0.5, p2: 0.5, wf: 83.6, fw: 0.0},
+                    javascript: {type: "model-open", p1: 6.7, p2: 15.0, wf: 70.0, fw: 55.6}
+                },
+                "DeepSeek-R1-Distill-Llama-8B": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 0.6, p2: 1.8, wf: 63.2, fw: 64.7},
+                    python: {type: "model-open", p1: 1.0, p2: 2.8, wf: 76.2, fw: 65.2},
+                    java: {type: "model-open", p1: 0.4, p2: 0.8, wf: 38.0, fw: 50.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 2.8, wf: 42.7, fw: 100.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 85.8, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.2, wf: 53.3, fw: 100.0},
+                    javascript: {type: "model-open", p1: 5.0, p2: 6.7, wf: 25.0, fw: 25.0}
+                },
+                "OpenCoder-8B-Instruct": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 0.2, p2: 0.2, wf: 100.0, fw: 0.0},
+                    python: {type: "model-open", p1: 0.2, p2: 0.2, wf: 100.0, fw: 0.0},
+                    java: {type: "model-open", p1: 0.8, p2: 0.8, wf: 100.0, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0}
+                },
+                "Qwen3-0.6B-Instruct Think": {
+                    size: "0.6B",
+                    all: {type: "model-open", p1: 0.5, p2: 0.7, wf: 78.1, fw: 35.7},
+                    python: {type: "model-open", p1: 0.6, p2: 1.1, wf: 83.2, fw: 44.4},
+                    java: {type: "model-open", p1: 0.8, p2: 0.8, wf: 72.4, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 66.4, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 94.8, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 68.0, fw: 0.0},
+                    javascript: {type: "model-open", p1: 3.3, p2: 5.0, wf: 68.3, fw: 34.0}
+                },
+                "Qwen3-0.6B-Instruct Chat": {
+                    size: "0.6B",
+                    all: {type: "model-open", p1: 0.2, p2: 0.3, wf: 88.9, fw: 20.0},
+                    python: {type: "model-open", p1: 0.4, p2: 0.5, wf: 90.7, fw: 25.0},
+                    java: {type: "model-open", p1: 0.4, p2: 0.4, wf: 72.4, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 93.7, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 97.2, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 93.8, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 58.3, fw: 0.0}
+                }
+            },
+            diff: {
+                // Closed-Source LLMs
+                "o4-mini-2025-04-16": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 13.0, p2: 36.8, wf: 94.6, fw: 64.7},
+                    python: {type: "model-closed", p1: 18.4, p2: 51.8, wf: 95.7, fw: 64.5},
+                    java: {type: "model-closed", p1: 5.2, p2: 31.2, wf: 94.0, fw: 83.3},
+                    cpp: {type: "model-closed", p1: 11.9, p2: 30.8, wf: 83.9, fw: 61.4},
+                    rust: {type: "model-closed", p1: 5.2, p2: 10.8, wf: 99.1, fw: 52.2},
+                    go: {type: "model-closed", p1: 6.5, p2: 22.3, wf: 93.5, fw: 71.1},
+                    javascript: {type: "model-closed", p1: 45.0, p2: 58.3, wf: 98.3, fw: 22.8}
+                },
+                "o3-mini-2025-01-31": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 11.0, p2: 35.5, wf: 95.5, fw: 69.0},
+                    python: {type: "model-closed", p1: 18.2, p2: 50.5, wf: 98.2, fw: 64.0},
+                    java: {type: "model-closed", p1: 3.2, p2: 30.0, wf: 95.6, fw: 89.3},
+                    cpp: {type: "model-closed", p1: 8.4, p2: 28.7, wf: 72.7, fw: 70.7},
+                    rust: {type: "model-closed", p1: 4.7, p2: 6.6, wf: 95.8, fw: 28.6},
+                    go: {type: "model-closed", p1: 3.5, p2: 20.6, wf: 97.8, fw: 83.1},
+                    javascript: {type: "model-closed", p1: 25.0, p2: 71.7, wf: 96.7, fw: 65.1}
+                },
+                "Claude-3-7-Sonnet-20250219": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 11.6, p2: 35.3, wf: 96.8, fw: 67.2},
+                    python: {type: "model-closed", p1: 17.4, p2: 51.2, wf: 97.9, fw: 66.0},
+                    java: {type: "model-closed", p1: 14.8, p2: 29.2, wf: 95.6, fw: 49.3},
+                    cpp: {type: "model-closed", p1: 5.6, p2: 22.4, wf: 88.1, fw: 75.0},
+                    rust: {type: "model-closed", p1: 3.8, p2: 6.6, wf: 98.1, fw: 42.9},
+                    go: {type: "model-closed", p1: 5.7, p2: 21.3, wf: 98.0, fw: 73.3},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 70.0, wf: 93.3, fw: 100.0}
+                },
+                "Claude-3-5-Sonnet-20241022": {
+                    size: "🔒", 
+                    all: {type: "model-closed", p1: 10.0, p2: 29.1, wf: 98.8, fw: 65.8},
+                    python: {type: "model-closed", p1: 13.8, p2: 41.5, wf: 99.4, fw: 66.8},
+                    java: {type: "model-closed", p1: 14.4, p2: 28.8, wf: 99.6, fw: 50.0},
+                    cpp: {type: "model-closed", p1: 2.8, p2: 14.0, wf: 89.5, fw: 80.0},
+                    rust: {type: "model-closed", p1: 3.3, p2: 5.2, wf: 100.0, fw: 36.4},
+                    go: {type: "model-closed", p1: 6.7, p2: 21.6, wf: 99.8, fw: 69.0},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 31.7, wf: 100.0, fw: 94.6}
+                },
+                "DeepSeek-V3": {
+                    size: "37/671B",
+                    all: {type: "model-open", p1: 9.6, p2: 26.0, wf: 98.5, fw: 62.9},
+                    python: {type: "model-open", p1: 15.4, p2: 39.0, wf: 99.0, fw: 60.6},
+                    java: {type: "model-open", p1: 13.2, p2: 24.8, wf: 99.2, fw: 46.8},
+                    cpp: {type: "model-open", p1: 5.6, p2: 11.9, wf: 91.6, fw: 52.9},
+                    rust: {type: "model-open", p1: 3.3, p2: 6.1, wf: 99.5, fw: 46.2},
+                    go: {type: "model-open", p1: 2.0, p2: 15.4, wf: 98.8, fw: 87.1},
+                    javascript: {type: "model-open", p1: 0.0, p2: 28.3, wf: 98.3, fw: 100.0}
+                },
+                "DeepSeek-V3-250324": {
+                    size: "37/671B", 
+                    all: {type: "model-open", p1: 8.4, p2: 26.6, wf: 98.3, fw: 68.4},
+                    python: {type: "model-open", p1: 12.1, p2: 40.4, wf: 98.5, fw: 70.1},
+                    java: {type: "model-open", p1: 14.4, p2: 24.4, wf: 98.8, fw: 41.0},
+                    cpp: {type: "model-open", p1: 6.3, p2: 11.2, wf: 93.7, fw: 43.8},
+                    rust: {type: "model-open", p1: 3.8, p2: 6.1, wf: 98.6, fw: 38.5},
+                    go: {type: "model-open", p1: 1.7, p2: 16.9, wf: 98.8, fw: 89.7},
+                    javascript: {type: "model-open", p1: 0.0, p2: 23.3, wf: 100.0, fw: 100.0}
+                },
+                "RepoReflectionCoder": {
+                    size: "32B",
+                    all: {type: "model-ours", p1: 10.5, p2: 27.0, wf: 94.7, fw: 61.0},
+                    python: {type: "model-ours", p1: 15.7, p2: 37.3, wf: 96.2, fw: 57.8},
+                    java: {type: "model-ours", p1: 12.0, p2: 22.0, wf: 92.0, fw: 45.5},
+                    cpp: {type: "model-ours", p1: 4.9, p2: 10.5, wf: 81.8, fw: 53.3},
+                    rust: {type: "model-ours", p1: 2.8, p2: 4.7, wf: 96.7, fw: 40.0},
+                    go: {type: "model-ours", p1: 5.2, p2: 18.1, wf: 95.8, fw: 71.2},
+                    javascript: {type: "model-ours", p1: 10.0, p2: 85.0, wf: 100.0, fw: 88.2}
+                },
+                "DeepSeek-R1": {
+                    size: "37/671B", 
+                    all: {type: "model-open", p1: 6.2, p2: 24.3, wf: 94.9, fw: 74.5},
+                    python: {type: "model-open", p1: 8.9, p2: 35.4, wf: 96.3, fw: 74.8},
+                    java: {type: "model-open", p1: 7.2, p2: 22.4, wf: 97.2, fw: 67.9},
+                    cpp: {type: "model-open", p1: 5.6, p2: 12.6, wf: 73.4, fw: 55.6},
+                    rust: {type: "model-open", p1: 2.8, p2: 7.5, wf: 96.2, fw: 62.5},
+                    go: {type: "model-open", p1: 3.0, p2: 15.1, wf: 96.5, fw: 80.3},
+                    javascript: {type: "model-open", p1: 0.0, p2: 30.0, wf: 100.0, fw: 100.0}
+                },
+                "Claude-3-7-Sonnet-20250219-Thinking": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 9.7, p2: 31.6, wf: 98.7, fw: 69.2},
+                    python: {type: "model-closed", p1: 14.1, p2: 45.2, wf: 98.9, fw: 68.7},
+                    java: {type: "model-closed", p1: 13.2, p2: 29.2, wf: 99.6, fw: 54.8},
+                    cpp: {type: "model-closed", p1: 7.0, p2: 18.2, wf: 95.1, fw: 61.5},
+                    rust: {type: "model-closed", p1: 2.4, p2: 8.0, wf: 99.1, fw: 70.6},
+                    go: {type: "model-closed", p1: 4.7, p2: 18.9, wf: 99.0, fw: 75.0},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 56.7, wf: 98.3, fw: 97.0}
+                },
+                "Claude-3-5-Haiku-20241022": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 8.0, p2: 25.4, wf: 98.2, fw: 68.5},
+                    python: {type: "model-closed", p1: 12.0, p2: 36.6, wf: 98.9, fw: 67.3},
+                    java: {type: "model-closed", p1: 12.4, p2: 25.2, wf: 95.6, fw: 50.8},
+                    cpp: {type: "model-closed", p1: 2.1, p2: 9.9, wf: 92.3, fw: 78.6},
+                    rust: {type: "model-closed", p1: 2.4, p2: 5.2, wf: 99.5, fw: 54.5},
+                    go: {type: "model-closed", p1: 3.2, p2: 16.4, wf: 99.5, fw: 80.3},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 41.7, wf: 100.0, fw: 95.9}
+                },
+                "Claude-3-5-Sonnet-20240620": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 7.7, p2: 24.6, wf: 97.9, fw: 68.6},
+                    python: {type: "model-closed", p1: 11.2, p2: 35.4, wf: 98.8, fw: 68.3},
+                    java: {type: "model-closed", p1: 11.6, p2: 22.4, wf: 94.8, fw: 48.2},
+                    cpp: {type: "model-closed", p1: 2.8, p2: 10.5, wf: 95.1, fw: 73.3},
+                    rust: {type: "model-closed", p1: 1.4, p2: 5.7, wf: 98.6, fw: 75.0},
+                    go: {type: "model-closed", p1: 4.0, p2: 16.1, wf: 98.3, fw: 75.4},
+                    javascript: {type: "model-closed", p1: 3.3, p2: 45.0, wf: 100.0, fw: 92.7}
+                },
+                "GPT-4.1-2025-04-14": {
+                    size: "🔒", 
+                    all: {type: "model-closed", p1: 7.2, p2: 29.9, wf: 93.9, fw: 76.1},
+                    python: {type: "model-closed", p1: 10.9, p2: 43.9, wf: 94.9, fw: 75.3},
+                    java: {type: "model-closed", p1: 4.0, p2: 25.2, wf: 87.2, fw: 84.1},
+                    cpp: {type: "model-closed", p1: 6.3, p2: 19.6, wf: 93.7, fw: 67.9},
+                    rust: {type: "model-closed", p1: 4.7, p2: 9.9, wf: 94.3, fw: 52.4},
+                    go: {type: "model-closed", p1: 2.5, p2: 12.9, wf: 95.8, fw: 80.8},
+                    javascript: {type: "model-closed", p1: 11.7, p2: 68.3, wf: 95.0, fw: 82.9}
+                },
+                "GPT-4.1-mini-2025-04-14": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 9.5, p2: 27.4, wf: 89.2, fw: 65.3},
+                    python: {type: "model-closed", p1: 12.2, p2: 37.1, wf: 92.1, fw: 67.1},
+                    java: {type: "model-closed", p1: 5.2, p2: 21.6, wf: 91.2, fw: 75.9},
+                    cpp: {type: "model-closed", p1: 4.9, p2: 17.5, wf: 65.7, fw: 72.0},
+                    rust: {type: "model-closed", p1: 4.7, p2: 7.5, wf: 96.2, fw: 37.5},
+                    go: {type: "model-closed", p1: 3.5, p2: 16.6, wf: 85.6, fw: 79.1},
+                    javascript: {type: "model-closed", p1: 60.0, p2: 86.7, wf: 98.3, fw: 27.4}
+                },
+                "Grok-3-fast": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 10.3, p2: 30.5, wf: 97.2, fw: 66.1},
+                    python: {type: "model-closed", p1: 16.6, p2: 42.8, wf: 97.0, fw: 61.3},
+                    java: {type: "model-closed", p1: 8.4, p2: 27.6, wf: 96.0, fw: 69.6},
+                    cpp: {type: "model-closed", p1: 5.6, p2: 16.8, wf: 97.2, fw: 66.7},
+                    rust: {type: "model-closed", p1: 4.2, p2: 9.0, wf: 97.6, fw: 52.6},
+                    go: {type: "model-closed", p1: 5.0, p2: 18.9, wf: 98.0, fw: 73.7},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 60.0, wf: 100.0, fw: 97.2}
+                },
+                "Grok-3": {
+                    size: "🔒", 
+                    all: {type: "model-closed", p1: 9.6, p2: 31.6, wf: 97.4, fw: 69.5},
+                    python: {type: "model-closed", p1: 15.7, p2: 45.0, wf: 98.0, fw: 65.0},
+                    java: {type: "model-closed", p1: 6.8, p2: 26.4, wf: 95.2, fw: 74.2},
+                    cpp: {type: "model-closed", p1: 6.3, p2: 15.4, wf: 95.1, fw: 59.1},
+                    rust: {type: "model-closed", p1: 2.8, p2: 7.5, wf: 97.6, fw: 62.5},
+                    go: {type: "model-closed", p1: 5.2, p2: 22.1, wf: 97.5, fw: 76.4},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 56.7, wf: 100.0, fw: 100.0}
+                },
+                "Grok-3-mini": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 6.7, p2: 24.4, wf: 92.6, fw: 72.5},
+                    python: {type: "model-closed", p1: 11.3, p2: 37.8, wf: 92.3, fw: 70.0},
+                    java: {type: "model-closed", p1: 3.2, p2: 21.2, wf: 92.8, fw: 84.9},
+                    cpp: {type: "model-closed", p1: 6.3, p2: 18.2, wf: 75.5, fw: 65.4},
+                    rust: {type: "model-closed", p1: 1.9, p2: 4.7, wf: 97.2, fw: 60.0},
+                    go: {type: "model-closed", p1: 2.7, p2: 12.2, wf: 96.0, fw: 77.6},
+                    javascript: {type: "model-closed", p1: 3.3, p2: 21.7, wf: 98.3, fw: 84.8}
+                },
+                "Grok-3-mini-fast": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 6.5, p2: 23.9, wf: 91.9, fw: 73.0},
+                    python: {type: "model-closed", p1: 10.6, p2: 36.1, wf: 91.6, fw: 70.6},
+                    java: {type: "model-closed", p1: 2.0, p2: 27.6, wf: 92.4, fw: 92.8},
+                    cpp: {type: "model-closed", p1: 7.0, p2: 16.8, wf: 74.1, fw: 58.3},
+                    rust: {type: "model-closed", p1: 3.3, p2: 5.2, wf: 97.2, fw: 36.4},
+                    go: {type: "model-closed", p1: 3.0, p2: 11.2, wf: 94.8, fw: 73.3},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 11.7, wf: 98.3, fw: 85.5}
+                },
+                "GPT-4.5-preview-2025-02-27": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 6.8, p2: 30.3, wf: 95.1, fw: 77.5},
+                    python: {type: "model-closed", p1: 10.4, p2: 45.7, wf: 97.1, fw: 77.3},
+                    java: {type: "model-closed", p1: 6.0, p2: 26.0, wf: 88.8, fw: 76.9},
+                    cpp: {type: "model-closed", p1: 6.3, p2: 25.2, wf: 95.8, fw: 75.0},
+                    rust: {type: "model-closed", p1: 4.7, p2: 9.4, wf: 92.5, fw: 50.0},
+                    go: {type: "model-closed", p1: 1.7, p2: 10.4, wf: 95.5, fw: 83.3},
+                    javascript: {type: "model-closed", p1: 5.0, p2: 58.3, wf: 100.0, fw: 91.4}
+                },
+                "o1-mini-2024-09-12": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 6.4, p2: 19.1, wf: 86.9, fw: 67.5},
+                    python: {type: "model-closed", p1: 9.8, p2: 28.7, wf: 88.7, fw: 66.0},
+                    java: {type: "model-closed", p1: 1.2, p2: 15.2, wf: 84.4, fw: 92.1},
+                    cpp: {type: "model-closed", p1: 6.3, p2: 15.4, wf: 61.5, fw: 59.1},
+                    rust: {type: "model-closed", p1: 1.9, p2: 3.8, wf: 90.1, fw: 50.0},
+                    go: {type: "model-closed", p1: 2.2, p2: 7.4, wf: 92.6, fw: 70.0},
+                    javascript: {type: "model-closed", p1: 20.0, p2: 45.0, wf: 83.3, fw: 55.6}
+                },
+                "GPT-4o-2024-11-20": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 6.8, p2: 21.3, wf: 86.8, fw: 67.9},
+                    python: {type: "model-closed", p1: 10.4, p2: 30.5, wf: 92.8, fw: 66.0},
+                    java: {type: "model-closed", p1: 3.2, p2: 15.6, wf: 77.2, fw: 79.5},
+                    cpp: {type: "model-closed", p1: 4.2, p2: 11.9, wf: 63.6, fw: 64.7},
+                    rust: {type: "model-closed", p1: 1.4, p2: 4.7, wf: 95.3, fw: 70.0},
+                    go: {type: "model-closed", p1: 0.7, p2: 9.9, wf: 85.4, fw: 92.5},
+                    javascript: {type: "model-closed", p1: 40.0, p2: 76.7, wf: 80.0, fw: 47.8}
+                },
+                "GPT-4o-mini-2024-07-18": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 4.3, p2: 11.8, wf: 85.7, fw: 63.2},
+                    python: {type: "model-closed", p1: 7.6, p2: 19.8, wf: 88.2, fw: 61.7},
+                    java: {type: "model-closed", p1: 0.4, p2: 7.6, wf: 80.0, fw: 94.7},
+                    cpp: {type: "model-closed", p1: 0.7, p2: 2.8, wf: 58.7, fw: 75.0},
+                    rust: {type: "model-closed", p1: 0.0, p2: 0.5, wf: 92.5, fw: 100.0},
+                    go: {type: "model-closed", p1: 0.5, p2: 2.7, wf: 89.6, fw: 81.8},
+                    javascript: {type: "model-closed", p1: 26.7, p2: 43.3, wf: 90.0, fw: 38.3}
+                },
+                "Doubao-1-5-Thinking-pro-m-250415": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 5.2, p2: 17.8, wf: 88.6, fw: 70.6},
+                    python: {type: "model-closed", p1: 9.9, p2: 30.9, wf: 93.4, fw: 68.0},
+                    java: {type: "model-closed", p1: 2.0, p2: 14.4, wf: 91.2, fw: 86.1},
+                    cpp: {type: "model-closed", p1: 5.3, p2: 8.4, wf: 58.0, fw: 36.4},
+                    rust: {type: "model-closed", p1: 0.9, p2: 1.9, wf: 75.9, fw: 50.0},
+                    go: {type: "model-closed", p1: 0.7, p2: 7.2, wf: 93.8, fw: 89.7},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 0.0, wf: 90.0, fw: 0.0}
+                },
+                "Gemini-2.0-Flash": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 3.9, p2: 13.2, wf: 78.8, fw: 70.8},
+                    python: {type: "model-closed", p1: 6.3, p2: 23.7, wf: 76.7, fw: 73.2},
+                    java: {type: "model-closed", p1: 4.8, p2: 8.0, wf: 80.0, fw: 40.0},
+                    cpp: {type: "model-closed", p1: 2.1, p2: 6.3, wf: 74.8, fw: 66.7},
+                    rust: {type: "model-closed", p1: 2.4, p2: 3.8, wf: 88.2, fw: 37.5},
+                    go: {type: "model-closed", p1: 0.2, p2: 3.2, wf: 78.2, fw: 92.3},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 10.0, wf: 81.7, fw: 100.0}
+                },
+                "Gemini-2.5-Flash-preview-04-17": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 3.2, p2: 15.3, wf: 79.5, fw: 78.8},
+                    python: {type: "model-closed", p1: 4.6, p2: 22.6, wf: 75.1, fw: 79.5},
+                    java: {type: "model-closed", p1: 3.2, p2: 10.8, wf: 72.8, fw: 70.4},
+                    cpp: {type: "model-closed", p1: 2.8, p2: 12.6, wf: 79.7, fw: 77.8},
+                    rust: {type: "model-closed", p1: 0.9, p2: 5.2, wf: 89.2, fw: 81.8},
+                    go: {type: "model-closed", p1: 2.0, p2: 9.4, wf: 86.8, fw: 78.9},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 15.0, wf: 83.3, fw: 88.7}
+                },
+                "Gemini-2.5-pro-preview-05-06": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 1.7, p2: 12.2, wf: 91.8, fw: 86.1},
+                    python: {type: "model-closed", p1: 1.7, p2: 18.2, wf: 91.6, fw: 90.6},
+                    java: {type: "model-closed", p1: 2.4, p2: 11.2, wf: 87.6, fw: 78.6},
+                    cpp: {type: "model-closed", p1: 2.1, p2: 11.9, wf: 93.7, fw: 82.4},
+                    rust: {type: "model-closed", p1: 0.9, p2: 3.8, wf: 90.6, fw: 75.0},
+                    go: {type: "model-closed", p1: 1.7, p2: 6.0, wf: 96.0, fw: 70.8},
+                    javascript: {type: "model-closed", p1: 0.0, p2: 8.3, wf: 85.0, fw: 100.0}
+                },
+                "GPT-4.1-nano-2025-04-14": {
+                    size: "🔒",
+                    all: {type: "model-closed", p1: 0.6, p2: 2.4, wf: 81.7, fw: 73.9},
+                    python: {type: "model-closed", p1: 0.7, p2: 2.8, wf: 83.8, fw: 73.9},
+                    java: {type: "model-closed", p1: 1.6, p2: 5.2, wf: 83.2, fw: 69.2},
+                    cpp: {type: "model-closed", p1: 0.0, p2: 2.8, wf: 42.7, fw: 100.0},
+                    rust: {type: "model-closed", p1: 0.0, p2: 0.0, wf: 95.3, fw: 0.0},
+                    go: {type: "model-closed", p1: 0.2, p2: 0.7, wf: 83.4, fw: 66.7},
+                    javascript: {type: "model-closed", p1: 1.7, p2: 5.0, wf: 81.7, fw: 66.0}
+                },
+                // Open-Source LLMs
+                "QwQ-32B": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 1.8, p2: 10.7, wf: 52.7, fw: 83.2},
+                    python: {type: "model-open", p1: 3.3, p2: 20.1, wf: 52.8, fw: 83.6},
+                    java: {type: "model-open", p1: 0.8, p2: 2.8, wf: 50.8, fw: 71.4},
+                    cpp: {type: "model-open", p1: 0.0, p2: 8.4, wf: 33.6, fw: 100.0},
+                    rust: {type: "model-open", p1: 0.9, p2: 2.4, wf: 46.2, fw: 60.0},
+                    go: {type: "model-open", p1: 0.7, p2: 3.2, wf: 62.5, fw: 76.9},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 61.7, fw: 0.0}
+                },
+                "Qwen3-32B-Instruct Think": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 4.9, p2: 18.5, wf: 79.7, fw: 73.4},
+                    python: {type: "model-open", p1: 6.8, p2: 29.0, wf: 82.7, fw: 76.5},
+                    java: {type: "model-open", p1: 4.8, p2: 16.4, wf: 82.8, fw: 70.7},
+                    cpp: {type: "model-open", p1: 2.8, p2: 10.5, wf: 58.0, fw: 73.3},
+                    rust: {type: "model-open", p1: 1.9, p2: 3.3, wf: 72.2, fw: 42.9},
+                    go: {type: "model-open", p1: 2.2, p2: 8.7, wf: 83.9, fw: 74.3},
+                    javascript: {type: "model-open", p1: 13.3, p2: 23.3, wf: 75.0, fw: 42.9}
+                },
+                "Qwen3-32B-Instruct Chat": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 5.2, p2: 15.9, wf: 91.7, fw: 67.3},
+                    python: {type: "model-open", p1: 7.4, p2: 23.8, wf: 90.5, fw: 68.7},
+                    java: {type: "model-open", p1: 5.6, p2: 14.8, wf: 92.0, fw: 62.2},
+                    cpp: {type: "model-open", p1: 4.9, p2: 7.7, wf: 84.6, fw: 36.4},
+                    rust: {type: "model-open", p1: 0.5, p2: 2.4, wf: 93.9, fw: 80.0},
+                    go: {type: "model-open", p1: 1.7, p2: 7.4, wf: 95.0, fw: 76.7},
+                    javascript: {type: "model-open", p1: 13.3, p2: 36.7, wf: 95.0, fw: 63.8}
+                },
+                "Qwen3-30B-A3B-Instruct Think": {
+                    size: "3/30B",
+                    all: {type: "model-open", p1: 4.2, p2: 14.4, wf: 72.6, fw: 70.6},
+                    python: {type: "model-open", p1: 7.2, p2: 23.5, wf: 75.4, fw: 69.4},
+                    java: {type: "model-open", p1: 2.0, p2: 7.6, wf: 72.4, fw: 73.7},
+                    cpp: {type: "model-open", p1: 1.4, p2: 9.1, wf: 57.3, fw: 84.6},
+                    rust: {type: "model-open", p1: 1.4, p2: 1.9, wf: 57.1, fw: 25.0},
+                    go: {type: "model-open", p1: 1.0, p2: 6.7, wf: 79.2, fw: 85.2},
+                    javascript: {type: "model-open", p1: 11.7, p2: 26.7, wf: 81.7, fw: 56.2}
+                },
+                "Qwen3-30B-A3B-Instruct Chat": {
+                    size: "3/30B",
+                    all: {type: "model-open", p1: 6.0, p2: 16.2, wf: 94.0, fw: 62.6},
+                    python: {type: "model-open", p1: 11.1, p2: 27.7, wf: 96.7, fw: 59.9},
+                    java: {type: "model-open", p1: 2.0, p2: 10.4, wf: 94.8, fw: 80.8},
+                    cpp: {type: "model-open", p1: 3.5, p2: 7.0, wf: 79.0, fw: 50.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.5, wf: 91.0, fw: 100.0},
+                    go: {type: "model-open", p1: 2.5, p2: 6.5, wf: 94.8, fw: 61.5},
+                    javascript: {type: "model-open", p1: 5.0, p2: 25.0, wf: 95.0, fw: 80.0}
+                },
+                "Qwen3-14B-Instruct Chat": {
+                    size: "14B",
+                    all: {type: "model-open", p1: 3.7, p2: 13.7, wf: 92.7, fw: 73.4},
+                    python: {type: "model-open", p1: 6.6, p2: 21.6, wf: 96.6, fw: 69.5},
+                    java: {type: "model-open", p1: 2.4, p2: 13.2, wf: 91.6, fw: 81.8},
+                    cpp: {type: "model-open", p1: 0.7, p2: 5.6, wf: 69.2, fw: 87.5},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.5, wf: 95.8, fw: 100.0},
+                    go: {type: "model-open", p1: 2.0, p2: 6.2, wf: 93.8, fw: 68.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 25.0, wf: 83.3, fw: 100.0}
+                },
+                "Qwen3-14B-Instruct Think": {
+                    size: "14B",
+                    all: {type: "model-open", p1: 3.9, p2: 16.4, wf: 76.5, fw: 76.4},
+                    python: {type: "model-open", p1: 6.7, p2: 26.3, wf: 80.7, fw: 74.5},
+                    java: {type: "model-open", p1: 2.8, p2: 15.6, wf: 73.2, fw: 82.1},
+                    cpp: {type: "model-open", p1: 2.1, p2: 11.9, wf: 56.6, fw: 82.4},
+                    rust: {type: "model-open", p1: 0.9, p2: 3.3, wf: 87.3, fw: 71.4},
+                    go: {type: "model-open", p1: 1.5, p2: 6.5, wf: 72.7, fw: 76.9},
+                    javascript: {type: "model-open", p1: 0.0, p2: 6.7, wf: 68.3, fw: 100.0}
+                },
+                "Qwen2.5-Coder-32B-Instruct": {
+                    size: "32B",
+                    all: {type: "model-open", p1: 3.9, p2: 12.9, wf: 74.6, fw: 69.7},
+                    python: {type: "model-open", p1: 6.2, p2: 19.4, wf: 82.0, fw: 67.9},
+                    java: {type: "model-open", p1: 3.6, p2: 14.8, wf: 74.0, fw: 75.7},
+                    cpp: {type: "model-open", p1: 3.5, p2: 4.9, wf: 34.3, fw: 28.6},
+                    rust: {type: "model-open", p1: 0.5, p2: 1.9, wf: 79.7, fw: 75.0},
+                    go: {type: "model-open", p1: 2.0, p2: 5.7, wf: 78.7, fw: 65.2},
+                    javascript: {type: "model-open", p1: 0.0, p2: 23.3, wf: 28.3, fw: 100.0}
+                },
+                "Qwen3-8B-Instruct Chat": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 5.0, p2: 12.1, wf: 91.9, fw: 58.3},
+                    python: {type: "model-open", p1: 6.5, p2: 17.3, wf: 93.0, fw: 62.7},
+                    java: {type: "model-open", p1: 8.8, p2: 14.8, wf: 95.6, fw: 40.5},
+                    cpp: {type: "model-open", p1: 0.7, p2: 2.1, wf: 76.9, fw: 66.7},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.9, wf: 94.8, fw: 100.0},
+                    go: {type: "model-open", p1: 1.0, p2: 4.0, wf: 92.6, fw: 75.0},
+                    javascript: {type: "model-open", p1: 25.0, p2: 46.7, wf: 83.3, fw: 46.5}
+                },
+                "Qwen3-8B-Instruct Think": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 3.2, p2: 11.3, wf: 69.5, fw: 71.4},
+                    python: {type: "model-open", p1: 5.7, p2: 19.9, wf: 70.9, fw: 71.2},
+                    java: {type: "model-open", p1: 2.0, p2: 6.0, wf: 77.2, fw: 66.7},
+                    cpp: {type: "model-open", p1: 0.7, p2: 6.3, wf: 53.1, fw: 88.9},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.9, wf: 65.1, fw: 100.0},
+                    go: {type: "model-open", p1: 1.7, p2: 4.5, wf: 74.2, fw: 61.1},
+                    javascript: {type: "model-open", p1: 1.7, p2: 10.0, wf: 43.3, fw: 83.0}
+                },
+                "Seed-Coder-8B-Instruct": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 3.1, p2: 5.9, wf: 40.1, fw: 47.7},
+                    python: {type: "model-open", p1: 5.4, p2: 9.4, wf: 41.1, fw: 42.9},
+                    java: {type: "model-open", p1: 2.8, p2: 8.0, wf: 31.2, fw: 65.0},
+                    cpp: {type: "model-open", p1: 1.4, p2: 2.1, wf: 17.5, fw: 33.3},
+                    rust: {type: "model-open", p1: 0.9, p2: 1.4, wf: 51.9, fw: 33.3},
+                    go: {type: "model-open", p1: 0.5, p2: 1.5, wf: 46.7, fw: 66.7},
+                    javascript: {type: "model-open", p1: 1.7, p2: 3.3, wf: 33.3, fw: 48.5}
+                },
+                "Qwen3-4B-Instruct Chat": {
+                    size: "4B",
+                    all: {type: "model-open", p1: 2.1, p2: 5.6, wf: 67.7, fw: 61.9},
+                    python: {type: "model-open", p1: 3.9, p2: 11.2, wf: 87.9, fw: 65.2},
+                    java: {type: "model-open", p1: 0.8, p2: 1.2, wf: 39.6, fw: 33.3},
+                    cpp: {type: "model-open", p1: 1.4, p2: 1.4, wf: 62.9, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.5, p2: 0.5, wf: 84.0, fw: 0.0},
+                    go: {type: "model-open", p1: 0.7, p2: 1.2, wf: 40.7, fw: 40.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 3.3, wf: 45.0, fw: 100.0}
+                },
+                "Qwen3-4B-Instruct Think": {
+                    size: "4B",
+                    all: {type: "model-open", p1: 2.1, p2: 7.5, wf: 65.3, fw: 71.6},
+                    python: {type: "model-open", p1: 4.4, p2: 13.8, wf: 72.0, fw: 68.1},
+                    java: {type: "model-open", p1: 1.6, p2: 3.6, wf: 65.2, fw: 55.6},
+                    cpp: {type: "model-open", p1: 0.0, p2: 2.1, wf: 46.9, fw: 100.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.9, wf: 66.0, fw: 100.0},
+                    go: {type: "model-open", p1: 0.0, p2: 1.7, wf: 60.5, fw: 100.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 11.7, wf: 48.3, fw: 100.0}
+                },
+                "DeepSeek-R1-Distill-Qwen-14B": {
+                    size: "14B",
+                    all: {type: "model-open", p1: 2.0, p2: 5.6, wf: 85.8, fw: 64.2},
+                    python: {type: "model-open", p1: 4.1, p2: 11.2, wf: 91.7, fw: 63.0},
+                    java: {type: "model-open", p1: 0.4, p2: 2.0, wf: 91.2, fw: 80.0},
+                    cpp: {type: "model-open", p1: 0.7, p2: 2.1, wf: 39.2, fw: 66.7},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 94.3, fw: 0.0},
+                    go: {type: "model-open", p1: 0.2, p2: 0.7, wf: 81.6, fw: 66.7},
+                    javascript: {type: "model-open", p1: 1.7, p2: 5.0, wf: 91.7, fw: 66.7}
+                },
+                "DeepSeek-R1-Distill-Llama-8B": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 1.4, p2: 2.3, wf: 64.8, fw: 39.5},
+                    python: {type: "model-open", p1: 1.0, p2: 2.8, wf: 72.2, fw: 65.2},
+                    java: {type: "model-open", p1: 0.0, p2: 0.4, wf: 74.8, fw: 100.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 24.5, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 70.8, fw: 0.0},
+                    go: {type: "model-open", p1: 0.2, p2: 0.2, wf: 52.9, fw: 0.0},
+                    javascript: {type: "model-open", p1: 28.3, p2: 30.0, wf: 78.3, fw: 5.6}
+                },
+                "Qwen3-1.7B-Instruct Chat": {
+                    size: "1.7B",
+                    all: {type: "model-open", p1: 0.3, p2: 0.6, wf: 29.3, fw: 50.0},
+                    python: {type: "model-open", p1: 0.5, p2: 1.0, wf: 31.1, fw: 50.0},
+                    java: {type: "model-open", p1: 0.4, p2: 0.4, wf: 27.2, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.7, p2: 0.7, wf: 37.1, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 7.5, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.2, wf: 30.5, fw: 100.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 1.7, wf: 65.0, fw: 100.0}
+                },
+                "Qwen3-1.7B-Instruct Think": {
+                    size: "1.7B",
+                    all: {type: "model-open", p1: 0.8, p2: 2.4, wf: 52.2, fw: 67.4},
+                    python: {type: "model-open", p1: 1.5, p2: 4.5, wf: 52.0, fw: 67.6},
+                    java: {type: "model-open", p1: 0.8, p2: 0.8, wf: 47.2, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 40.6, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 65.6, fw: 0.0},
+                    go: {type: "model-open", p1: 0.2, p2: 0.5, wf: 49.1, fw: 50.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 8.3, wf: 76.7, fw: 100.0}
+                },
+                "Llama3.1-8B-Instruct": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 0.2, p2: 0.2, wf: 3.7, fw: 0.0},
+                    python: {type: "model-open", p1: 0.2, p2: 0.2, wf: 2.6, fw: 0.0},
+                    java: {type: "model-open", p1: 0.8, p2: 0.8, wf: 4.8, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 3.5, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 5.2, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 4.2, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 6.7, fw: 0.0}
+                },
+                "OpenCoder-8B-Instruct": {
+                    size: "8B",
+                    all: {type: "model-open", p1: 0.2, p2: 0.2, wf: 100.0, fw: 0.0},
+                    python: {type: "model-open", p1: 0.2, p2: 0.2, wf: 100.0, fw: 0.0},
+                    java: {type: "model-open", p1: 0.8, p2: 0.8, wf: 100.0, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 100.0, fw: 0.0}
+                },
+                "Qwen3-0.6B-Instruct Think": {
+                    size: "0.6B",
+                    all: {type: "model-open", p1: 0.2, p2: 0.2, wf: 10.6, fw: 0.0},
+                    python: {type: "model-open", p1: 0.2, p2: 0.2, wf: 12.3, fw: 0.0},
+                    java: {type: "model-open", p1: 0.8, p2: 0.8, wf: 4.0, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 13.3, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 16.0, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 8.7, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 3.3, fw: 0.0}
+                },
+                "Qwen3-0.6B-Instruct Chat": {
+                    size: "0.6B",
+                    all: {type: "model-open", p1: 0.2, p2: 0.2, wf: 14.8, fw: 0.0},
+                    python: {type: "model-open", p1: 0.2, p2: 0.2, wf: 17.9, fw: 0.0},
+                    java: {type: "model-open", p1: 0.4, p2: 0.4, wf: 11.2, fw: 0.0},
+                    cpp: {type: "model-open", p1: 0.0, p2: 0.0, wf: 21.0, fw: 0.0},
+                    rust: {type: "model-open", p1: 0.0, p2: 0.0, wf: 11.8, fw: 0.0},
+                    go: {type: "model-open", p1: 0.0, p2: 0.0, wf: 10.7, fw: 0.0},
+                    javascript: {type: "model-open", p1: 0.0, p2: 0.0, wf: 10.0, fw: 0.0}
+                }
+            }
+        };
+
+        // Sort models by a specific metric (descending order)
+        function sortModels(data, language, metric = 'p1') {
+            return Object.keys(data).sort((a, b) => {
+                return data[b][language][metric] - data[a][language][metric];
+            });
+        }
+
+        function updateTable(tableId, data, language) {
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+            tableBody.innerHTML = '';
+            
+            // Sort models by P1 score
+            const sortedModels = sortModels(data, language, 'p1');
+            
+            // Find the top model for each metric
+            const topP1 = Math.max(...sortedModels.map(model => data[model][language].p1));
+            const topP2 = Math.max(...sortedModels.map(model => data[model][language].p2));
+            const topWF = Math.max(...sortedModels.map(model => data[model][language].wf));
+            const topFW = Math.max(...sortedModels.map(model => data[model][language].fw));
+            
+            for (const model of sortedModels) {
+                const scores = data[model][language];
+                const row = document.createElement('tr');
+                row.className = scores.type;
+                
+                row.innerHTML = `
+                    <td>${model}</td>
+                    <td>${data[model].size}</td>
+                    <td class="${scores.p1 === topP1 ? 'top-model' : ''}">${scores.p1.toFixed(1)}</td>
+                    <td class="${scores.p2 === topP2 ? 'top-model' : ''}">${scores.p2.toFixed(1)}</td>
+                    <td class="${scores.wf === topWF ? 'top-model' : ''}">${scores.wf.toFixed(1)}</td>
+                    <td class="${scores.fw === topFW ? 'top-model' : ''}">${scores.fw.toFixed(1)}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Chart variables to store the current state
+        let wholeCurrentView = 'performance';
+        let diffCurrentView = 'performance';
+        
+        function updateChart(chartObj, data, language, viewType = 'performance') {
+            // Sort models by P1 score and take top 15 for better visualization
+            const sortedModels = sortModels(data, language, 'p1').slice(0, 15);
+            const labels = sortedModels;
+            
+            chartObj.data.labels = labels;
+            chartObj.options.plugins.legend.display = true;
+            
+            // Clear existing datasets
+            chartObj.data.datasets = [];
+            
+            // Prepare background colors based on model type
+            const backgroundColors = sortedModels.map(model => {
+                const type = data[model][language].type;
+                if (type === "model-closed") return 'rgba(135, 206, 235, 0.6)'; // Light blue for closed models
+                if (type === "model-open") return 'rgba(255, 165, 0, 0.6)';     // Orange for open models
+                if (type === "model-ours") return 'rgba(144, 238, 144, 0.6)';   // Light green for our model
+                return 'rgba(200, 200, 200, 0.6)';
+            });
+            
+            // Update chart based on view type
+            if (viewType === 'performance') {
+                // Show Pass@1 and Pass@2 side by side
+                chartObj.data.datasets = [
+                    {
+                        label: 'Pass@1',
+                        data: sortedModels.map(model => data[model][language].p1),
+                        backgroundColor: backgroundColors,
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Pass@2',
+                        data: sortedModels.map(model => data[model][language].p2),
+                        backgroundColor: backgroundColors.map(color => color.replace('0.6', '0.8')),
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1
+                    }
+                ];
+                chartObj.options.plugins.title.text = `Performance (${language === 'all' ? 'All Languages' : language}) - Pass@1 and Pass@2`;
+            } else {
+                // Show Fix Weight
+                chartObj.data.datasets = [
+                    {
+                        label: 'Fix Weight',
+                        data: sortedModels.map(model => data[model][language].fw),
+                        backgroundColor: backgroundColors,
+                        borderColor: 'rgba(0, 0, 0, 0.1)',
+                        borderWidth: 1
+                    }
+                ];
+                chartObj.options.plugins.title.text = `Fix Weight (${language === 'all' ? 'All Languages' : language})`;
+            }
+            
+            chartObj.update();
+        }
+
+        // Event listeners for language selectors
+        document.getElementById('languageSelector').addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            updateTable('wholeTable', leaderboards.whole, selectedLanguage);
+            updateChart(wholeChart, leaderboards.whole, selectedLanguage, wholeCurrentView);
+        });
+
+        document.getElementById('diffLanguageSelector').addEventListener('change', function() {
+            const selectedLanguage = this.value;
+            updateTable('diffTable', leaderboards.diff, selectedLanguage);
+            updateChart(diffChart, leaderboards.diff, selectedLanguage, diffCurrentView);
+        });
+
+        // Event listeners for chart toggle buttons
+        document.getElementById('wholePerfBtn').addEventListener('click', function() {
+            document.getElementById('wholeFWBtn').classList.remove('active');
+            this.classList.add('active');
+            wholeCurrentView = 'performance';
+            updateChart(wholeChart, leaderboards.whole, document.getElementById('languageSelector').value, wholeCurrentView);
+        });
+
+        document.getElementById('wholeFWBtn').addEventListener('click', function() {
+            document.getElementById('wholePerfBtn').classList.remove('active');
+            this.classList.add('active');
+            wholeCurrentView = 'fixweight';
+            updateChart(wholeChart, leaderboards.whole, document.getElementById('languageSelector').value, wholeCurrentView);
+        });
+
+        document.getElementById('diffPerfBtn').addEventListener('click', function() {
+            document.getElementById('diffFWBtn').classList.remove('active');
+            this.classList.add('active');
+            diffCurrentView = 'performance';
+            updateChart(diffChart, leaderboards.diff, document.getElementById('diffLanguageSelector').value, diffCurrentView);
+        });
+
+        document.getElementById('diffFWBtn').addEventListener('click', function() {
+            document.getElementById('diffPerfBtn').classList.remove('active');
+            this.classList.add('active');
+            diffCurrentView = 'fixweight';
+            updateChart(diffChart, leaderboards.diff, document.getElementById('diffLanguageSelector').value, diffCurrentView);
+        });
+
+        // Initialize the charts
+        const wholeCtx = document.getElementById('wholeChart').getContext('2d');
+        const wholeChart = new Chart(wholeCtx, {
+            type: 'bar',
+            data: { labels: [], datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 90,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Full-file code generation performance'
+                    }
+                }
+            }
+        });
+
+        const diffCtx = document.getElementById('diffChart').getContext('2d');
+        const diffChart = new Chart(diffCtx, {
+            type: 'bar',
+            data: { labels: [], datasets: [] },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: {
+                            autoSkip: false,
+                            maxRotation: 90,
+                            minRotation: 45
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Score (%)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Patch-based incremental edits performance'
+                    }
+                }
+            }
+        });
+
+        // Initial data load
+        updateTable('wholeTable', leaderboards.whole, 'all');
+        updateChart(wholeChart, leaderboards.whole, 'all', 'performance');
+        
+        updateTable('diffTable', leaderboards.diff, 'all');
+        updateChart(diffChart, leaderboards.diff, 'all', 'performance');
+    </script>
 </body>
 </html>
